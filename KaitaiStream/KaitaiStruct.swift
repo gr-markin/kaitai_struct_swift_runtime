@@ -9,7 +9,5 @@
 import Foundation
 
 public protocol KaitaiStruct {
-    var _io:KaitaiStream { get }
-    var _root:KaitaiStruct? { get }
-    var _parent:KaitaiStruct? { get }
+  var _io: KaitaiStream { get }
 }

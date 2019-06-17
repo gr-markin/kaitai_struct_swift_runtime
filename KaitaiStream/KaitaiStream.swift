@@ -12,7 +12,7 @@ import zlib
 // #pragma mark - KaitaiStream
 open class KaitaiStream {
     fileprivate var stream:KaitaiSeekableStream
-
+  
     open var position:Int {
         return stream.position
     }
@@ -26,7 +26,7 @@ open class KaitaiStream {
     }
 
     public init(data:Data) {
-        stream = NSDataSeekableStream(data: data);
+        stream = DataSeekableStream(data: data);
     }
 
     public init?(path:String) {
@@ -58,6 +58,16 @@ open class KaitaiStream {
         stream.seek(position)
     }
 
+  
+  
+    open func readU1() -> UInt8? {
+        guard let value = stream.read() else {
+          return nil
+        }
+    
+        return value
+    }
+  
     open func readS1() -> Int8? {
         guard let value = stream.read() else {
             return nil
@@ -68,15 +78,9 @@ open class KaitaiStream {
         return valueInt
     }
 
-    open func readU1() -> UInt8? {
-        guard let value = stream.read() else {
-            return nil
-        }
 
-        return value
-    }
-
-    open func readU2le() -> UInt? {
+  
+    open func readU2le() -> UInt16? {
         guard let value1 = stream.read() else {
             return nil
         }
@@ -85,13 +89,13 @@ open class KaitaiStream {
             return nil
         }
 
-        let value1Int = UInt(value1)
-        let value2Int = UInt(value2)
+        let value1Int = UInt16(value1)
+        let value2Int = UInt16(value2)
 
         return (value2Int << 8) + (value1Int << 0)
     }
 
-    open func readU2be() -> UInt? {
+    open func readU2be() -> UInt16? {
         guard let value1 = stream.read() else {
             return nil
         }
@@ -100,13 +104,15 @@ open class KaitaiStream {
             return nil
         }
 
-        let value1Int = UInt(value1)
-        let value2Int = UInt(value2)
+        let value1Int = UInt16(value1)
+        let value2Int = UInt16(value2)
 
         return (value1Int << 8) + (value2Int << 0)
     }
 
-    open func readS2le() -> Int? {
+  
+  
+    open func readS2le() -> Int16? {
         guard let value1 = stream.read() else {
             return nil
         }
@@ -115,13 +121,13 @@ open class KaitaiStream {
             return nil
         }
 
-        let value1Int = Int(bitPattern:UInt(value1))
-        let value2Int = Int(bitPattern:UInt(value2))
+        let value1Int = Int16(bitPattern:UInt16(value1))
+        let value2Int = Int16(bitPattern:UInt16(value2))
 
         return (value2Int << 8) + (value1Int << 0)
     }
 
-    open func readS2be() -> Int? {
+    open func readS2be() -> Int16? {
         guard let value1 = stream.read() else {
             return nil
         }
@@ -130,13 +136,15 @@ open class KaitaiStream {
             return nil
         }
 
-        let value1Int = Int(bitPattern:UInt(value1))
-        let value2Int = Int(bitPattern:UInt(value2))
+        let value1Int = Int16(bitPattern:UInt16(value1))
+        let value2Int = Int16(bitPattern:UInt16(value2))
 
         return (value1Int << 8) + (value2Int << 0)
     }
 
-    open func readU4le() -> UInt? {
+  
+  
+    open func readU4le() -> UInt32? {
         guard let value1 = stream.read() else {
             return nil
         }
@@ -153,15 +161,15 @@ open class KaitaiStream {
             return nil
         }
 
-        let value1Int = UInt(value1)
-        let value2Int = UInt(value2)
-        let value3Int = UInt(value3)
-        let value4Int = UInt(value4)
+        let value1Int = UInt32(value1)
+        let value2Int = UInt32(value2)
+        let value3Int = UInt32(value3)
+        let value4Int = UInt32(value4)
 
         return (value4Int << 24) + (value3Int << 16) + (value2Int << 8) + (value1Int << 0)
     }
 
-    open func readU4be() -> UInt? {
+    open func readU4be() -> UInt32? {
         guard let value1 = stream.read() else {
             return nil
         }
@@ -178,65 +186,81 @@ open class KaitaiStream {
             return nil
         }
 
-        let value1Int = UInt(value1)
-        let value2Int = UInt(value2)
-        let value3Int = UInt(value3)
-        let value4Int = UInt(value4)
-
-        return (value4Int << 24) + (value3Int << 16) + (value2Int << 8) + (value1Int << 0)
-    }
-
-    open func readS4le() -> Int? {
-        guard let value1 = stream.read() else {
-            return nil
-        }
-
-        guard let value2 = stream.read() else {
-            return nil
-        }
-
-        guard let value3 = stream.read() else {
-            return nil
-        }
-
-        guard let value4 = stream.read() else {
-            return nil
-        }
-
-        let value1Int = Int(bitPattern:UInt(value1))
-        let value2Int = Int(bitPattern:UInt(value2))
-        let value3Int = Int(bitPattern:UInt(value3))
-        let value4Int = Int(bitPattern:UInt(value4))
-
-        return (value4Int << 24) + (value3Int << 16) + (value2Int << 8) + (value1Int << 0)
-    }
-
-    open func readS4be() -> Int? {
-        guard let value1 = stream.read() else {
-            return nil
-        }
-
-        guard let value2 = stream.read() else {
-            return nil
-        }
-
-        guard let value3 = stream.read() else {
-            return nil
-        }
-
-        guard let value4 = stream.read() else {
-            return nil
-        }
-
-        let value1Int = Int(bitPattern:UInt(value1))
-        let value2Int = Int(bitPattern:UInt(value2))
-        let value3Int = Int(bitPattern:UInt(value3))
-        let value4Int = Int(bitPattern:UInt(value4))
+        let value1Int = UInt32(value1)
+        let value2Int = UInt32(value2)
+        let value3Int = UInt32(value3)
+        let value4Int = UInt32(value4)
 
         return (value1Int << 24) + (value2Int << 16) + (value3Int << 8) + (value4Int << 0)
     }
 
-    open func readU8le() -> UInt? {
+  
+  
+    open func readS4le() -> Int32? {
+        guard let value1 = stream.read() else {
+            return nil
+        }
+
+        guard let value2 = stream.read() else {
+            return nil
+        }
+
+        guard let value3 = stream.read() else {
+            return nil
+        }
+
+        guard let value4 = stream.read() else {
+            return nil
+        }
+
+        let value1Int = Int32(bitPattern:UInt32(value1))
+        let value2Int = Int32(bitPattern:UInt32(value2))
+        let value3Int = Int32(bitPattern:UInt32(value3))
+        let value4Int = Int32(bitPattern:UInt32(value4))
+
+        return (value4Int << 24) + (value3Int << 16) + (value2Int << 8) + (value1Int << 0)
+    }
+
+    open func readS4be() -> Int32? {
+        guard let value1 = stream.read() else {
+            return nil
+        }
+
+        guard let value2 = stream.read() else {
+            return nil
+        }
+
+        guard let value3 = stream.read() else {
+            return nil
+        }
+
+        guard let value4 = stream.read() else {
+            return nil
+        }
+
+        let value1Int = Int32(bitPattern:UInt32(value1))
+        let value2Int = Int32(bitPattern:UInt32(value2))
+        let value3Int = Int32(bitPattern:UInt32(value3))
+        let value4Int = Int32(bitPattern:UInt32(value4))
+
+        return (value1Int << 24) + (value2Int << 16) + (value3Int << 8) + (value4Int << 0)
+    }
+
+  
+  
+    open func readU8le() -> UInt64? {
+        guard let value1 = readU4le() else {
+            return nil
+        }
+
+        guard let value2 = readU4le() else {
+            return nil
+        }
+      
+        return (UInt64(value2) << 32) + (UInt64(value1) << 0)
+    }
+
+    open func readU8be() -> UInt64? {
         guard let value1 = readU4le() else {
             return nil
         }
@@ -245,10 +269,12 @@ open class KaitaiStream {
             return nil
         }
 
-        return (value2 << 32) + (value1 << 0)
+        return (UInt64(value1) << 32) + (UInt64(value2) << 0)
     }
 
-    open func readU8be() -> UInt? {
+  
+  
+    open func readS8le() -> Int64? {
         guard let value1 = readU4le() else {
             return nil
         }
@@ -256,34 +282,66 @@ open class KaitaiStream {
         guard let value2 = readU4le() else {
             return nil
         }
-
-        return (value1 << 32) + (value2 << 0)
+      
+        let value1Int = Int64(bitPattern:UInt64(value1))
+        let value2Int = Int64(bitPattern:UInt64(value2))
+      
+        return (value2Int << 32) + (value1Int << 0)
     }
 
-    open func readS8le() -> Int? {
-        guard let value1 = readS4le() else {
-            return nil
-        }
-
-        guard let value2 = readS4le() else {
-            return nil
-        }
-
-        return (value2 << 32) + (value1 << 0)
+    open func readS8be() -> Int64? {
+      guard let value1 = readU4le() else {
+        return nil
+      }
+      
+      guard let value2 = readU4le() else {
+        return nil
+      }
+      
+      let value1Int = Int64(bitPattern:UInt64(value1))
+      let value2Int = Int64(bitPattern:UInt64(value2))
+      
+      return (value1Int << 32) + (value2Int << 0)
     }
-
-    open func readS8be() -> Int? {
-        guard let value1 = readS4le() else {
-            return nil
-        }
-
-        guard let value2 = readS4le() else {
-            return nil
-        }
-
-        return (value1 << 32) + (value2 << 0)
+  
+  
+  
+    open func readF4le() -> Float? {
+      guard let value = readU4le() else {
+        return nil
+      }
+      
+      return Float(bitPattern: value)
     }
-
+  
+    open func readF4be() -> Float? {
+      guard let value = readU4be() else {
+        return nil
+      }
+      
+      return Float(bitPattern: value)
+    }
+  
+  
+  
+    open func readF8le() -> Double? {
+      guard let value = readU8le() else {
+        return nil
+      }
+    
+      return Double(bitPattern: value)
+    }
+  
+    open func readF8be() -> Double? {
+      guard let value = readU8be() else {
+        return nil
+      }
+    
+      return Double(bitPattern: value)
+    }
+  
+  
+  
     open func readBytes(_ length:Int) -> [UInt8]? {
         guard let bytes = stream.read(length) else {
             return nil
@@ -291,7 +349,7 @@ open class KaitaiStream {
 
         return bytes
     }
-
+  
     open func readBytesFull() -> [UInt8]? {
         var bytes = [UInt8]()
 
@@ -305,8 +363,14 @@ open class KaitaiStream {
 
         return bytes
     }
-
-    open func ensureFixedContents(_ length:Int,bytes:[UInt8]) -> [UInt8]? {
+  
+  
+  
+    open func ensureFixedContents(_ bytes:[UInt8]) -> [UInt8]? {
+        return self.ensureFixedContents(bytes.count, bytes:bytes)
+    }
+  
+    open func ensureFixedContents(_ length:Int, bytes:[UInt8]) -> [UInt8]? {
         guard let actualBytes = readBytes(length) else {
             return nil
         }
@@ -318,6 +382,8 @@ open class KaitaiStream {
         return actualBytes
     }
 
+  
+  
     open func readStrEos(_ encoding: String.Encoding) -> String? {
         guard let bytes = readBytesFull() else {
             return nil
@@ -364,6 +430,8 @@ open class KaitaiStream {
         }
     }
 
+  
+  
     open func processZlib(_ bytes:[UInt8]) -> [UInt8]? {
         let inflater = InflateStream()
 

@@ -63,7 +63,7 @@ class ByteArraySeekableStream : KaitaiSeekableStream {
     }
 }
 
-class NSDataSeekableStream:KaitaiSeekableStream {
+class DataSeekableStream:KaitaiSeekableStream {
     fileprivate let data:Data
 
     fileprivate(set) var position:Int = 0
@@ -81,16 +81,9 @@ class NSDataSeekableStream:KaitaiSeekableStream {
     }
 
     func read() -> UInt8? {
-        guard !isEOF else {
+        guard let bytes = read(1) else {
             return nil
         }
-
-        var bytes = [UInt8](repeating: 0, count: 1)
-
-        (data as NSData).getBytes(&bytes, length: 1)
-
-        position += 1
-
         return bytes[0]
     }
 
@@ -102,18 +95,12 @@ class NSDataSeekableStream:KaitaiSeekableStream {
         guard position + length <= data.count else {
             return nil
         }
-
+      
         var bytes = [UInt8](repeating: 0, count: length)
-
-        if position == 0 {
-            (data as NSData).getBytes(&bytes, length: length)
-        } else {
-            let range = NSRange(location: position, length: length)
-            (data as NSData).getBytes(&bytes, range: range)
-        }
-
+      
+        data.copyBytes(to: &bytes, from: position..<position+length)
         position += length
-
+      
         return bytes
     }
 }
